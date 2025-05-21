@@ -41,8 +41,8 @@ export default function ReportStats() {
   
   return (
     <div className="bg-white rounded-lg shadow-md p-4">
-      <h3 className="text-lg font-medium mb-2">Fact-Check Statistics</h3>
-      <p className="text-3xl font-bold mb-4">{stats.total} Total Reports</p>
+      <h3 className="text-lg font-medium mb-2 text-black">Fact-Check Statistics</h3>
+      <p className="text-3xl font-bold mb-4 text-black">{stats.total} Total Reports</p>
       
       <div className="grid grid-cols-3 gap-2">
         <div className="bg-green-50 p-3 rounded text-center">

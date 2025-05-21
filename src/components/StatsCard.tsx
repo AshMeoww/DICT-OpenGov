@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
+
 
 type Stats = {
   total: number;
@@ -14,19 +15,20 @@ export default function StatsCard() {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    async function fetchStats() {
+    const fetchStats = async () => {
       try {
-        const response = await fetch('/api/stats');
-        if (!response.ok) throw new Error('Failed to fetch stats');
+        const response = await fetch('/api/getReports', { cache: 'no-store' });
+        if (!response.ok) throw new Error('Failed to fetch reports');
         const data = await response.json();
-        setStats(data.stats);
+        console.log('Fetched reports:', data.reports);
+        setStats(data.stats || []);
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        console.error('Error fetching reports:', error);
       } finally {
         setLoading(false);
       }
-    }
-    
+    };
+
     fetchStats();
   }, []);
   
@@ -49,17 +51,17 @@ export default function StatsCard() {
   }
   
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md">
-      <h3 className="text-lg font-medium mb-2">Fact-Check Statistics</h3>
-      <p className="text-3xl font-bold mb-4">{stats.total} Total Reports</p>
+    <div className="bg-white p-4 rounded-lg shadow-md text-black">
+      <h3 className="text-lg font-medium mb-2 text-black">Fact-Check Statistics</h3>
+      <p className="text-3xl font-bold mb-4 text-black">{stats.total} Total Reports</p>
       <div className="grid grid-cols-3 gap-2 text-center">
         <div className="bg-green-50 p-2 rounded">
-          <span className="block text-green-700 font-medium">{stats.likelyTrue}</span>
+          <span className="block text-green-700 font-medium">{stats.likelyTrue as number}</span>
           <span className="text-xs text-green-600">True</span>
         </div>
         <div className="bg-red-50 p-2 rounded">
-          <span className="block text-red-700 font-medium">{stats.likelyFalse}</span>
-          <span className="text-xs text-red-600">False</span>
+          <span className="block text-red-700 font-medium">{stats.likelyFalse as number}</span>
+          <span className="text-xs text-red-700">False</span>
         </div>
         <div className="bg-yellow-50 p-2 rounded">
           <span className="block text-yellow-700 font-medium">{stats.needsReview}</span>
@@ -69,3 +71,7 @@ export default function StatsCard() {
     </div>
   );
 }
+    function setReports(arg0: any) {
+      throw new Error('Function not implemented.');
+    }
+

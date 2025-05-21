@@ -27,9 +27,9 @@ export default function Dashboard() {
             <FactCheckSources />
           </div>
           
-          <div className="md:col-span-2 lg:col-span-3">
+          <div className="md:col-span-2 lg:col-span-3 text-black">
             <div className="bg-white rounded-lg shadow-md p-4">
-              <h3 className="text-lg font-medium mb-3">Recent Activity</h3>
+              <h3 className="text-lg mb-3 font-bold">Recent Activity</h3>
               <div className="space-y-3">
                 {[1, 2, 3, 4, 5].map(i => (
                   <div key={i} className="flex items-center border-b border-gray-100 pb-2 last:border-0">
