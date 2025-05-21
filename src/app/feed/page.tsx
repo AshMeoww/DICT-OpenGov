@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import StatsCard from '@/components/StatsCard';
@@ -14,7 +14,8 @@ type Report = {
   verdict: 'likely true' | 'likely false' | 'needs review';
   confidence: number;
   timestamp: string;
-  sources?: string[];
+  sources?: any[];
+  explanation?: string;
 };
 
 export default function Feed() {
@@ -22,15 +23,17 @@ export default function Feed() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
   const searchParams = useSearchParams();
+  const router = useRouter();
   const highlightId = searchParams.get('id');
 
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        const response = await fetch('/api/getReports');
+        const response = await fetch('/api/getReports', { cache: 'no-store' });
         if (!response.ok) throw new Error('Failed to fetch reports');
         const data = await response.json();
-        setReports(data.reports);
+        console.log('Fetched reports:', data.reports);
+        setReports(data.reports || []);
       } catch (error) {
         console.error('Error fetching reports:', error);
       } finally {
@@ -39,6 +42,12 @@ export default function Feed() {
     };
 
     fetchReports();
+    
+    // Set up a refresh interval
+    const intervalId = setInterval(fetchReports, 5000);
+    
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(intervalId);
   }, []);
 
   const filteredReports = reports.filter(report => {
@@ -164,6 +173,13 @@ export default function Feed() {
                   </div>
                 )}
                 
+                {report.explanation && (
+                  <div className="mb-3 text-sm text-gray-800">
+                    <span className="font-medium">Analysis:</span>{' '}
+                    <p>{report.explanation}</p>
+                  </div>
+                )}
+                
                 <div className="flex justify-between items-center text-sm text-gray-500">
                   <div>
                     <span className="font-medium">Confidence:</span>{' '}
@@ -181,7 +197,7 @@ export default function Feed() {
                     <div className="flex flex-wrap gap-2">
                       {report.sources.map((source, index) => (
                         <span key={index} className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-50 text-blue-700">
-                          {source}
+                          {typeof source === 'string' ? source : source.name || 'Unknown source'}
                         </span>
                       ))}
                     </div>

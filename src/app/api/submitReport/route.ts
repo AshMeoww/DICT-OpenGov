@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 
 // In a real application, this would connect to a database
-const reports = [];
+// Export the reports array so it can be imported by other routes
+export const reports = [];
 let nextId = 1;
 
 export async function POST(request: Request) {
@@ -16,7 +17,7 @@ export async function POST(request: Request) {
     }
     
     const report = {
-      id: nextId++,
+      id: String(nextId++),
       timestamp: new Date().toISOString(),
       ...reportData
     };
